@@ -149,11 +149,15 @@
             </button>
           </form>
           <!-- Registration Form -->
-          <form v-show="tab === 'register'">
+          <vee-form
+            v-show="tab === 'register'"
+            :validation-schema="schema"
+            @submit="register"
+          >
             <!-- Name -->
             <div class="mb-3">
               <label class="inline-block mb-2">Name</label>
-              <input
+              <vee-field
                 type="text"
                 class="
                   block
@@ -169,12 +173,14 @@
                   rounded
                 "
                 placeholder="Enter Name"
+                name="name"
               />
+              <ErrorMessage class="text-red-600" name="name" />
             </div>
             <!-- Email -->
             <div class="mb-3">
               <label class="inline-block mb-2">Email</label>
-              <input
+              <vee-field
                 type="email"
                 class="
                   block
@@ -190,12 +196,14 @@
                   rounded
                 "
                 placeholder="Enter Email"
+                name="email"
               />
+              <ErrorMessage class="text-red-600" name="email" />
             </div>
             <!-- Age -->
             <div class="mb-3">
               <label class="inline-block mb-2">Age</label>
-              <input
+              <vee-field
                 type="number"
                 class="
                   block
@@ -210,12 +218,14 @@
                   focus:border-black
                   rounded
                 "
+                name="age"
               />
+              <ErrorMessage class="text-red-600" name="age" />
             </div>
             <!-- Password -->
             <div class="mb-3">
               <label class="inline-block mb-2">Password</label>
-              <input
+              <vee-field
                 type="password"
                 class="
                   block
@@ -231,12 +241,14 @@
                   rounded
                 "
                 placeholder="Password"
+                name="password"
               />
+              <ErrorMessage class="text-red-600" name="password" />
             </div>
             <!-- Confirm Password -->
             <div class="mb-3">
               <label class="inline-block mb-2">Confirm Password</label>
-              <input
+              <vee-field
                 type="password"
                 class="
                   block
@@ -252,12 +264,15 @@
                   rounded
                 "
                 placeholder="Confirm Password"
+                name="confirm_password"
               />
+              <ErrorMessage class="text-red-600" name="confirm_password" />
             </div>
             <!-- Country -->
             <div class="mb-3">
               <label class="inline-block mb-2">Country</label>
-              <select
+              <vee-field
+                as="select"
                 class="
                   block
                   w-full
@@ -271,20 +286,25 @@
                   focus:border-black
                   rounded
                 "
+                name="country"
               >
                 <option value="India">India</option>
                 <option value="USA">USA</option>
                 <option value="Mexico">Mexico</option>
                 <option value="Germany">Germany</option>
-              </select>
+              </vee-field>
+              <ErrorMessage class="text-red-600" name="country" />
             </div>
             <!-- TOS -->
             <div class="mb-3 pl-6">
-              <input
+              <vee-field
+                value="1"
                 type="checkbox"
                 class="w-4 h-4 float-left -ml-6 mt-1 rounded"
+                name="tos"
               />
               <label class="inline-block">Accept terms of service</label>
+              <ErrorMessage class="text-red-600" name="tos" />
             </div>
             <button
               type="submit"
@@ -302,7 +322,7 @@
             >
               Submit
             </button>
-          </form>
+          </vee-form>
         </div>
       </div>
     </div>
@@ -316,6 +336,16 @@ export default {
   name: 'Auth',
   methods: {
     ...mapMutations(['toggleModalShow']),
+    register(values) {
+      console.log(values);
+      // age: "19"
+      // confirm_password: "sidharth"
+      // country: "India"
+      // email: "sid@sid.com"
+      // name: "sidharth"
+      // password: "sidharth"
+      // tos: "1"
+    },
   },
   computed: {
     ...mapState(['authModalShow']),
@@ -323,6 +353,15 @@ export default {
   data() {
     return {
       tab: 'login',
+      schema: {
+        name: 'required|min:3|max:100|alphaSpaces',
+        email: 'required|min:3|max:100|email',
+        age: 'required|minVal:18|maxVal:120',
+        password: 'required|min:8|max:100',
+        confirm_password: 'confirmed:@password',
+        country: 'required',
+        tos: 'required',
+      },
     };
   },
 };

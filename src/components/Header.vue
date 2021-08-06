@@ -4,8 +4,8 @@
     <nav class="container mx-auto flex justify-start items-center py-5 px-4">
       <!-- App Name -->
       <a class="text-white font-bold uppercase text-2xl mr-4" href="/"
-        >Musically.</a
-      >
+        >Musically<i class="fas fa-compact-disc"></i
+      ></a>
 
       <div class="flex flex-grow items-center">
         <!-- Primary Navigation -->
