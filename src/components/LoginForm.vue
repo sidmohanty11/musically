@@ -90,15 +90,24 @@ export default {
     };
   },
   methods: {
-    login(values) {
+    async login(values) {
       this.log_show_alert = true;
       this.log_in_sub = true;
       this.log_alert_variant = 'bg-blue-500';
       this.log_alert_msg = 'Please wait, logging in...';
 
+      try {
+        await this.$store.dispatch('login', values);
+      } catch (e) {
+        this.reg_in_sub = false;
+        this.reg_alert_variant = 'bg-red-500';
+        this.reg_alert_msg = 'Invalid login credentials.';
+        return;
+      }
+
       this.log_alert_variant = 'bg-green-500';
       this.log_alert_msg = 'Success!';
-      console.log('values', values);
+      window.location.reload();
     },
   },
 };

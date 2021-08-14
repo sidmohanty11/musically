@@ -22,5 +22,8 @@ export default {
     AppMain,
     Player,
   },
+  created() {
+    this.$store.dispatch('init_login');
+  },
 };
 </script>
