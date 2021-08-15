@@ -22,9 +22,6 @@ const routes = [
     meta: {
       requiresAuth: true,
     },
-    beforeEnter: (to, from, next) => {
-      next();
-    },
   },
   {
     path: '/:catchAll(.*)*',
@@ -40,11 +37,10 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   // if current route requires authentication
-  if (to.matched.some((record) => record.meta.requiresAuth)) {
+  if (!to.matched.some((record) => record.meta.requiresAuth)) {
     next();
     return;
   }
-
   if (store.state.userLoggedIn) {
     next();
   } else {
