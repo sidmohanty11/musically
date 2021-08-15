@@ -206,18 +206,7 @@
       </div>
       <!-- Current Position -->
       <div
-        class="
-          float-left
-          w-7
-          h-7
-          leading-3
-          text-gray-400
-          mt-0
-          text-lg
-          w-14
-          ml-5
-          mt-1
-        "
+        class="float-left h-7 leading-3 text-gray-400 text-lg w-14 ml-5 mt-1"
       >
         <span class="player-currenttime">00:00</span>
       </div>
@@ -270,18 +259,7 @@
       </div>
       <!-- Duration -->
       <div
-        class="
-          float-left
-          w-7
-          h-7
-          leading-3
-          text-gray-400
-          mt-0
-          text-lg
-          w-14
-          ml-8
-          mt-1
-        "
+        class="float-left h-7 leading-3 text-gray-400 text-lg w-14 ml-8 mt-1"
       >
         <span class="player-duration">03:06</span>
       </div>
