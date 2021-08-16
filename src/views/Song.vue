@@ -1,25 +1,4 @@
 <template>
-  <!-- Header -->
-  <header id="header" class="bg-gray-700">
-    <nav class="container mx-auto flex justify-start items-center py-5 px-4">
-      <!-- App Name -->
-      <a class="text-white font-bold uppercase text-2xl mr-4" href="#">Music</a>
-
-      <div class="flex flex-grow items-center">
-        <!-- Primary Navigation -->
-        <ul class="flex flex-row mt-1">
-          <!-- Navigation Links -->
-          <li>
-            <a class="px-2 text-white" href="#">Login / Register</a>
-          </li>
-          <li>
-            <a class="px-2 text-white" href="#">Manage</a>
-          </li>
-        </ul>
-      </div>
-    </nav>
-  </header>
-
   <!-- Music Header -->
   <section class="w-full mb-8 py-14 text-center text-white relative">
     <div
@@ -45,8 +24,8 @@
       </button>
       <div class="z-50 text-left ml-8">
         <!-- Song Info -->
-        <div class="text-3xl font-bold">Song Title</div>
-        <div>Blues Rock</div>
+        <div class="text-3xl font-bold">{{ song.modified_name }}</div>
+        <div>{{ song.genre }}</div>
       </div>
     </div>
   </section>
@@ -55,12 +34,25 @@
     <div class="bg-white rounded border border-gray-200 relative flex flex-col">
       <div class="px-6 pt-6 pb-5 font-bold border-b border-gray-200">
         <!-- Comment Count -->
-        <span class="card-title">Comments (15)</span>
+        <span class="card-title">Comments ({{ song.comment_count }})</span>
         <i class="fa fa-comments float-right text-green-400 text-2xl"></i>
       </div>
       <div class="p-6">
-        <form>
-          <textarea
+        <div
+          class="text-white text-center font-bold p-4 mb-4"
+          v-if="comment_show_alert"
+          :class="comment_alert_variant"
+        >
+          {{ comment_alert_msg }}
+        </div>
+        <vee-form
+          :validation-schema="commentSchema"
+          v-if="userLoggedIn"
+          @submit="addComment"
+        >
+          <vee-field
+            as="textarea"
+            name="comment"
             class="
               block
               w-full
@@ -76,14 +68,16 @@
               mb-4
             "
             placeholder="Your comment here..."
-          ></textarea>
+          ></vee-field>
+          <ErrorMessage name="comment" class="text-red-600" />
           <button
             type="submit"
             class="py-1.5 px-3 rounded text-white bg-green-600 block"
+            :disabled="comment_in_submission"
           >
             Submit
           </button>
-        </form>
+        </vee-form>
         <!-- Sort Comments -->
         <select
           class="
@@ -99,6 +93,7 @@
             focus:border-black
             rounded
           "
+          v-model="sort"
         >
           <option value="1">Latest</option>
           <option value="2">Oldest</option>
@@ -108,161 +103,103 @@
   </section>
   <!-- Comments -->
   <ul class="container mx-auto">
-    <li class="p-6 bg-gray-50 border border-gray-200">
+    <li
+      class="p-6 bg-gray-50 border border-gray-200"
+      v-for="comment in sortedComments"
+      :key="comment.docId"
+    >
       <!-- Comment Author -->
       <div class="mb-5">
-        <div class="font-bold">Elaine Dreyfuss</div>
-        <time>5 mins ago</time>
+        <div class="font-bold">{{ comment.name }}</div>
+        <time>{{ comment.datePosted }}</time>
       </div>
 
       <p>
-        Sed ut perspiciatis unde omnis iste natus error sit voluptatem
-        accusantium der doloremque laudantium.
-      </p>
-    </li>
-    <li class="p-6 bg-gray-50 border border-gray-200">
-      <!-- Comment Author -->
-      <div class="mb-5">
-        <div class="font-bold">Elaine Dreyfuss</div>
-        <time>5 mins ago</time>
-      </div>
-
-      <p>
-        Sed ut perspiciatis unde omnis iste natus error sit voluptatem
-        accusantium der doloremque laudantium.
-      </p>
-    </li>
-    <li class="p-6 bg-gray-50 border border-gray-200">
-      <!-- Comment Author -->
-      <div class="mb-5">
-        <div class="font-bold">Elaine Dreyfuss</div>
-        <time>5 mins ago</time>
-      </div>
-
-      <p>
-        Sed ut perspiciatis unde omnis iste natus error sit voluptatem
-        accusantium der doloremque laudantium.
-      </p>
-    </li>
-    <li class="p-6 bg-gray-50 border border-gray-200">
-      <!-- Comment Author -->
-      <div class="mb-5">
-        <div class="font-bold">Elaine Dreyfuss</div>
-        <time>5 mins ago</time>
-      </div>
-
-      <p>
-        Sed ut perspiciatis unde omnis iste natus error sit voluptatem
-        accusantium der doloremque laudantium.
-      </p>
-    </li>
-    <li class="p-6 bg-gray-50 border border-gray-200">
-      <!-- Comment Author -->
-      <div class="mb-5">
-        <div class="font-bold">Elaine Dreyfuss</div>
-        <time>5 mins ago</time>
-      </div>
-
-      <p>
-        Sed ut perspiciatis unde omnis iste natus error sit voluptatem
-        accusantium der doloremque laudantium.
-      </p>
-    </li>
-    <li class="p-6 bg-gray-50 border border-gray-200">
-      <!-- Comment Author -->
-      <div class="mb-5">
-        <div class="font-bold">Elaine Dreyfuss</div>
-        <time>5 mins ago</time>
-      </div>
-
-      <p>
-        Sed ut perspiciatis unde omnis iste natus error sit voluptatem
-        accusantium der doloremque laudantium.
+        {{ comment.content }}
       </p>
     </li>
   </ul>
-
-  <!-- Player -->
-  <div
-    class="
-      fixed
-      bottom-0
-      left-0
-      bg-white
-      p-5
-      pb-4
-      text-left
-      align-top
-      w-full
-      h-16
-    "
-  >
-    <div class="relative">
-      <!-- Play/Pause Button -->
-      <div class="float-left w-7 h-7 leading-3">
-        <button type="button">
-          <i class="fa fa-play text-gray-500 text-xl"></i>
-        </button>
-      </div>
-      <!-- Current Position -->
-      <div
-        class="float-left h-7 leading-3 text-gray-400 text-lg w-14 ml-5 mt-1"
-      >
-        <span class="player-currenttime">00:00</span>
-      </div>
-      <!-- Scrub -->
-      <div class="float-left w-7 h-7 leading-3 ml-7 mt-2 player-scrub">
-        <div
-          class="
-            absolute
-            left-0
-            right-0
-            text-lg text-center
-            mx-auto
-            player-song-info
-          "
-        >
-          <span class="song-title">Song Title</span> by
-          <span class="song-artist">Artist</span>
-        </div>
-        <span
-          class="
-            block
-            w-full
-            h-2
-            rounded
-            m-1
-            mt-2
-            bg-gray-200
-            relative
-            cursor-pointer
-          "
-        >
-          <span
-            class="absolute top-neg-8 text-gray-800 text-lg"
-            style="left: 50%"
-          >
-            <i class="fas fa-circle"></i>
-          </span>
-          <span
-            class="
-              block
-              h-2
-              rounded
-              bg-gradient-to-r
-              from-green-500
-              to-green-400
-            "
-            style="width: 50%"
-          ></span>
-        </span>
-      </div>
-      <!-- Duration -->
-      <div
-        class="float-left h-7 leading-3 text-gray-400 text-lg w-14 ml-8 mt-1"
-      >
-        <span class="player-duration">03:06</span>
-      </div>
-    </div>
-  </div>
 </template>
+
+<script>
+import { songsCollection, auth, commentsCollection } from '@/includes/firebase';
+import { mapState } from 'vuex';
+
+export default {
+  name: 'Song',
+  computed: {
+    ...mapState(['userLoggedIn']),
+    sortedComments() {
+      return this.comments.slice().sort((a, b) => {
+        if (this.sort === '1') {
+          // descending
+          return new Date(b.datePosted) - new Date(a.datePosted);
+        }
+        // ascending
+        return new Date(a.datePosted) - new Date(b.datePosted);
+      });
+    },
+  },
+  data() {
+    return {
+      song: {},
+      comment_in_submission: false,
+      comment_show_alert: false,
+      comment_alert_variant: 'bg-blue-500',
+      comment_alert_msg: 'Please wait, your comment is being submitted',
+      commentSchema: {
+        comment: 'required|min:4',
+      },
+      comments: [],
+      sort: '1',
+    };
+  },
+  async created() {
+    const docSnapshot = await songsCollection.doc(this.$route.params.id).get();
+    if (!docSnapshot.exists) {
+      this.$router.push({ name: 'home' });
+      return;
+    }
+    this.song = docSnapshot.data();
+    this.getComments();
+  },
+  methods: {
+    async addComment(values, { resetForm }) {
+      this.comment_in_submission = true;
+      this.comment_show_alert = true;
+      this.comment_alert_variant = 'bg-blue-500';
+      this.comment_alert_msg = 'Please wait, your comment is being submitted';
+
+      const comment = {
+        content: values.comment,
+        datePosted: new Date().toString(),
+        sid: this.$route.params.id,
+        name: auth.currentUser.displayName,
+        uid: auth.currentUser.uid,
+      };
+
+      await commentsCollection.add(comment);
+
+      this.getComments();
+      this.comment_in_submission = false;
+      this.comment_alert_variant = 'bg-green-500';
+      this.comment_alert_msg = 'Comment added!';
+      resetForm();
+    },
+    async getComments() {
+      const snapshots = await commentsCollection
+        .where('sid', '==', this.$route.params.id)
+        .get();
+
+      this.comments = [];
+
+      snapshots.forEach((doc) => {
+        this.comments.push({
+          ...doc.data(),
+          docId: doc.id,
+        });
+      });
+    },
+  },
+};
+</script>
