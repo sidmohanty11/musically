@@ -19,6 +19,7 @@
           rounded-full
           focus:outline-none
         "
+        @click.prevent="newSong(song)"
       >
         <i class="fas fa-play"></i>
       </button>
@@ -123,7 +124,7 @@
 
 <script>
 import { songsCollection, auth, commentsCollection } from '@/includes/firebase';
-import { mapState } from 'vuex';
+import { mapState, mapActions } from 'vuex';
 
 export default {
   name: 'Song',
@@ -160,10 +161,15 @@ export default {
       this.$router.push({ name: 'home' });
       return;
     }
+    const { sort } = this.$route.query;
+
+    this.sort = sort === '1' || sort === '2' ? sort : '1';
+
     this.song = docSnapshot.data();
     this.getComments();
   },
   methods: {
+    ...mapActions(['newSong']),
     async addComment(values, { resetForm }) {
       this.comment_in_submission = true;
       this.comment_show_alert = true;
@@ -177,6 +183,11 @@ export default {
         name: auth.currentUser.displayName,
         uid: auth.currentUser.uid,
       };
+
+      this.song.comment_count += 1;
+      await songsCollection.doc(this.$route.params.id).update({
+        comment_count: this.song.comment_count,
+      });
 
       await commentsCollection.add(comment);
 
@@ -199,6 +210,14 @@ export default {
           docId: doc.id,
         });
       });
+    },
+  },
+  watch: {
+    sort(newVal) {
+      if (newVal === this.$route.query.sort) {
+        return;
+      }
+      this.$router.push({ query: { sort: newVal } });
     },
   },
 };
