@@ -103,6 +103,21 @@ export default createStore({
         });
       }
     },
+    updateSeek({ state, dispatch }, payload) {
+      if (!state.sound.playing) {
+        return;
+      }
+
+      const { x, width } = payload.currentTarget.getBoundingClientRect();
+      const clickX = payload.clientX - x;
+      const percentage = clickX / width;
+      const secs = state.sound.duration() * percentage;
+
+      state.sound.seek(secs);
+      state.sound.on('seek', () => {
+        dispatch('progress');
+      });
+    },
   },
   getters: {
     playing: (state) => {

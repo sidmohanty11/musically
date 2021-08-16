@@ -47,8 +47,8 @@
           v-if="currentSong.modified_name"
         >
           <span class="song-title">{{ currentSong.modified_name }}</span>
-          <span class="song-artist"
-            >Uploaded by {{ currentSong.displayName }}</span
+          <span class="song-artist text-purple-700"
+            >(Uploaded by {{ currentSong.displayName }})</span
           >
         </div>
         <!-- Scrub Container  -->
@@ -64,6 +64,7 @@
             relative
             cursor-pointer
           "
+          @click.prevent="updateSeek"
         >
           <!-- Player Ball -->
           <span
@@ -102,7 +103,7 @@ import { mapActions, mapGetters, mapState } from 'vuex';
 export default {
   name: 'Player',
   methods: {
-    ...mapActions(['toggleAudio']),
+    ...mapActions(['toggleAudio', 'updateSeek']),
   },
   computed: {
     ...mapState(['duration', 'seek', 'playerProgress', 'currentSong']),
