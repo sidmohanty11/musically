@@ -9,26 +9,9 @@ yarn install
 ```
 yarn serve
 ```
+### Screenshot
+![musically](https://user-images.githubusercontent.com/73601258/130330803-9b0c0598-2d6c-487b-a456-31dd81af6408.png)
 
-### Compiles and minifies for production
-```
-yarn build
-```
-
-### Run your unit tests
-```
-yarn test:unit
-```
-
-### Run your end-to-end tests
-```
-yarn test:e2e
-```
-
-### Lints and fixes files
-```
-yarn lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+### Working model video at,
+https://www.instagram.com/p/CS2HZSiBSW-/ (short-clip and my other projects)
+https://icedrive.net/0/23yBbOEbK9 (full-app)
